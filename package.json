@@ -10,8 +10,8 @@
     "seed_heroku": "heroku run ./node_modules/.bin/sequelize db:seed:all --url \\$DATABASE_URL"
   },
   "engines": {
-    "node": "6.8.x",
-    "npm": "3.10.x"
+    "node": "7.10.x",
+    "npm": "4.2.x"
   },
   "dependencies": {
     "body-parser": "~1.16.0",
