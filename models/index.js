@@ -26,5 +26,13 @@ var sequelize = new Sequelize(url, {storage: storage});
 // Importar la definicion de la tabla Quiz de quiz.js
 var Quiz = sequelize.import(path.join(__dirname, 'quiz'));
 
+//Crear tablas
+sequelize.sync().then(function () {console.log ('Base de datos creada con exito');
+})
+.catch (function (error){
+	console.log("Error creando las tables de la BBDD: ", error);
+	process.exit(1);
+});
+
 
 exports.Quiz = Quiz; // exportar definición de tabla Quiz
