@@ -12,6 +12,10 @@ router.get('/', function(req, res, next) {
 router.get('/author', function(req, res, next) {
     res.render('author');
 });
+//RANDOM PLAY
+router.get('/quizzes/random_play', function(req,res,next){
+	res.render('/quizzes/random_play');
+});
 
 
 // Autoload de rutas que usen :quizId
