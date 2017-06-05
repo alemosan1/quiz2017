@@ -181,12 +181,12 @@ exports.randomplay = function (req, res, next) {
 	    .then(function(pending_quizzes) {
 	        if(pending_quizzes.length > 0) {   // Quedan preguntas pendientes de responder
 	            var quiz = pending_quizzes[Math.floor((Math.random() * pending_quizzes.length))]; // Elección aleatoria de la pregunta
-	            res.render('quizzes/random_play', {
+	            res.render('quizzes/randomplay', {
 	                score: answered_questions.length-1, // Puntuación
 	                quiz: quiz
 	            });
 	        } else {                // No quedan preguntas pendientes de responder
-	                res.render('quizzes/random_nomore', {
+	                res.render('quizzes/randomnomore', {
 	                score: answered_questions.length-1  // Puntuación
 	            });
 	        }
@@ -211,7 +211,7 @@ exports.randomcheck = function (req, res, next) {
 
     var score = req.session.answered_questions.length-1;    // Puntuación
 
-    res.render('quizzes/random_result', {
+    res.render('quizzes/randomresult', {
         score: score,   
         result: result,
         answer: answer
