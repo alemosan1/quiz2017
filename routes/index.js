@@ -91,7 +91,7 @@ router.get('/users/:userId(\\d+)/quizzes', quizController.index);     // ver las
 
 
 // Definición de rutas de /quizzes
-<<<<<<< HEAD
+
 router.get('/quizzes',
     quizController.index);
 router.get('/quizzes/:quizId(\\d+)',
