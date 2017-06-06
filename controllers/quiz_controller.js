@@ -268,6 +268,7 @@ exports.randomCheck = function (req, res, next) {
     }
     //res para enviar el resultado a random_result.
     res.render('quizzes/random_result', {
+	quiz:req.quiz,
         result: resultado,
         score: req.session.juegoRandom.resueltos.length,
         answer: answer
