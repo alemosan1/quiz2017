@@ -219,7 +219,7 @@ exports.randomPlay = function (req, res, next) {
                     quiz: quiz
                 });
             } else { 
-		tmp_score= req.session.juegoRandom.resueltos.length
+		tmp_score= req.session.juegoRandom.resueltos.length;
             	req.session.juegoRandom.resueltos = [];
                 	res.render('quizzes/random_nomore', {
                     score: tmp_score
