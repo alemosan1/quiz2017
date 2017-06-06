@@ -39,9 +39,13 @@
             <a href="/users/<%= session.user.id %>/quizzes">Mis Preguntas</a>
         <% } %>
         <a href="/author">Créditos</a>
+
         <% if (session.user) { %>
            <a href="/users">Usuarios</a>
         <% } %>
+
+	<a href="/quizzes/randomplay">Jugar</a>
+
     </nav>
 
     <section class="main" id="mainSection">
@@ -87,7 +91,7 @@
     </section>
 
     <footer class="main" id="mainFooter">
-        <a href="http://es.wikipedia.org/wiki/Quiz">
+        <a href="/help">
             ¿Qué es un Quiz?</a>
     </footer>
 </div>
