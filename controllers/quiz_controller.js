@@ -174,6 +174,65 @@ exports.play = function (req, res, next) {
 };
 
 
+//GET /quizzes/randomplay
+exports.randomPlay = function (req, res, next) {
+
+  	// Compruebo si existe
+    if(!req.session.juegoRandom){
+        req.session.juegoRandom= {
+            resueltos: []};
+    }
+
+    //Aqui defino el array donde defino las preguntas ya usadas
+ 
+
+	if (req.session.juegoRandom.resueltos.length >0 ){
+		restantes =req.session.juegoRandom.resueltos;
+	}else{
+		restantes = [-1];
+		}
+
+    //Obtengo las preguntas que  quedan sin contestar
+    models.Quiz.count({'id':{$notIn:restantes}})
+
+
+        .then(function (preguntas) {
+
+          //pongo un ID random en función del numero de preguntas
+          	if( parseInt(Math.floor(Math.random() * preguntas.length))%2===0){
+			indice=1;
+		}else
+			indice=0;
+
+            return models.Quiz.findAll({ where: {id: { $notIn: restantes}}    , limit:1 , offset:indice}) 
+        })
+
+        .then(function (pregunta) {
+
+            var quiz = pregunta[0];
+		
+
+	  //Compruebo si quedan preguntas disponibles para preguntar
+            if(quiz) {
+                res.render('quizzes/random_play', {
+                    score: req.session.juegoRandom.resueltos.length,
+                    quiz: quiz
+                });
+            } else { 
+		tmp_score= req.session.juegoRandom.resueltos.length
+            	req.session.juegoRandom.resueltos = [];
+                	res.render('quizzes/random_nomore', {
+                    score: tmp_score
+                });
+            }
+
+
+    }).catch(function (error) {	
+	error.flash('error', 'Error al buscar ' + error.message);
+        next(error);
+    });
+};
+
 // GET /quizzes/:quizId/check
 exports.check = function (req, res, next) {
 
@@ -188,96 +247,31 @@ exports.check = function (req, res, next) {
     });
 };
 
-exports.randomplay = function (req, res, next) {
-    models.Quiz.findAll()
-    .then(function (quizzes) {
+// GET /quizzes/randomcheck
 
-        //Opción para no incluir preguntas usadas
-        if(!req.session.restantes || req.session.restantes.length === 0){
-            req.session.restantes = [];
-            req.session.aciertos = 0;
-            for(var i=0;i<quizzes.length;i++){
-                req.session.restantes.push(quizzes[i].id); //Guardamos todos los ID - [1-count]
-            }
+exports.randomCheck = function (req, res, next) {
+
+    //guardo en answer del query o espacio en blanco
     
-        }
+    var answer = req.query.answer || "";
 
-        var randomIndex = parseInt(Math.round(Math.random() * (req.session.restantes.length-1)));
-        idRandom = req.session.restantes[randomIndex];
+    //Indiferencia entra mayusculas y minisculas
+    var resultado = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
 
-
-        //var arrayRestantes = req.session.restantes.length === 0 ? [-1] : req.session.restantes;
-        // var whereOptions = {'id' : [idRandom]};
-        
-        // var extraido = models.Quiz.findAll({
-        //     where: whereOptions,
-        // });
-
-        var extraido = models.Quiz.findById(idRandom);
-
-        if(!extraido){
-            extraido = [];
-        }
-        
-        return extraido; //Pasamos lo encontrado
-    })
-    .then(function (quizzes) { //recibe el quiz de la base de datos
-        var aciertos = 0;
-        if(req.session.aciertos){
-            aciertos = req.session.aciertos;
-        } else {
-            req.session.aciertos = 0; //La inicializo si no existe
-        }
-
-        if(req.session.restantes.length === 0 || quizzes.length === 0){
-            res.render('quizzes/random_nomore', {
-                score: req.session.aciertos
-             });
-        } else {
-            var index = req.session.restantes.indexOf(quizzes.id);
-            req.session.restantes.splice(index,1); //Quitamos la mostrada
-            res.render('quizzes/random_play.ejs', {
-            quiz: quizzes,
-            score: aciertos
-        });
-        }
-        
-    })
-    .catch(function (error) {
-        next(error);
-    });
-};
-
-// GET /quizzes/randomcheck/:quizId
-exports.randomcheck = function (req, res, next) {
-
-    models.Quiz.count()
-    .then(function (count) {
-
-        var answer = req.query.answer || "";
-
-        var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
-        if(result){
-            req.session.aciertos++; //Aumentamos los aciertos si ha acertado
-        }
-
-        if(req.session.restantes.length === 0){
-            res.render('quizzes/random_nomore', {
-                score: req.session.aciertos
-             });
-        } else {
-            if(!result){
-                req.session.aciertos = 0;
-                req.session.restantes = [];
-            }
-            res.render('quizzes/random_result', {
-                score: req.session.aciertos,
-                result: result,
-                answer: answer
-             });
-            
-        }
+ 
+    if(resultado){
+    	//Si la pregunta se ha respondido correctamente añado la pregunta al array
+        req.session.juegoRandom.resueltos.push(req.quiz.id);
+    }else{
+    	//Reinicio el array de preguntas utilizadas.
+    	req.session.juegoRandom.resueltos = [];
+    }
+    //res para enviar el resultado a random_result.
+    res.render('quizzes/random_result', {
+        result: resultado,
+        score: req.session.juegoRandom.resueltos.length,
+        answer: answer
     });
 
-    
 };
+

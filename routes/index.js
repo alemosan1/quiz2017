@@ -33,9 +33,10 @@ router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
 
 //RANDOMPLAY
-
-router.get('/quizzes/random_play', 			quizController.randomPlay);
-router.get('/quizzes/random_check/:quizId(\\d+)', 	quizController.randomCheck);
+//Practica52:
+//Enruto randomplay y randomcheck con el Id del quiz
+router.get('/quizzes/randomplay', quizController.randomPlay);
+router.get('/quizzes/randomcheck/:quizId(\\d+)', quizController.randomCheck);
 
 
 module.exports = router;
