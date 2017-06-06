@@ -1,3 +1,7 @@
 node_modules
+<<<<<<< HEAD
 quiz.sqlite
 .env
+=======
+npm-debug.log
+>>>>>>> practica51
